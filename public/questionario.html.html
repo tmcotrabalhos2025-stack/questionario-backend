@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>TMCO CONSULTORIA – QUESTIONÁRIO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    :root{--azul:#003366;--azul2:#007BFF;--amarelo:#FFD700;--cinza:#f4f4f4;}
+    *{box-sizing:border-box}
+    body{font-family:Arial,Helvetica,sans-serif;background:var(--cinza);margin:0}
+    header{background:var(--azul);color:#fff;padding:0;border-bottom:2px solid var(--azul2);text-align:center}
+    header img{width:100%;height:250px;object-fit:cover;display:block}
+    header h1{margin:0;padding:12px;font-size:20px}
+    .cta{text-align:center;margin:18px 0}
+    .cta button{padding:14px 24px;background:var(--azul2);color:#fff;border:0;border-radius:10px;font-size:16px;cursor:pointer}
+    form{display:none;background:#fff;max-width:980px;margin:18px auto;padding:22px;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+    h3{background:var(--amarelo);color:var(--azul);padding:8px 12px;border-radius:8px;margin:26px 0 14px;font-size:18px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .full{grid-column:1/-1}
+    .q{display:flex;flex-direction:column;gap:6px}
+    label{font-weight:700;color:var(--azul2)}
+    input,select,textarea{padding:10px;border:1px solid #d0d7de;border-radius:8px}
+    input:invalid{border-color:#e74c3c}
+    small.req{color:#e74c3c;font-weight:700}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .btn{padding:10px 16px;border-radius:8px;border:0;cursor:pointer}
+    .primary{background:var(--azul2);color:#fff}
+    .ghost{background:#e9eef7;color:#083663}
+    footer{text-align:center;background:var(--azul);color:#fff;border-top:2px solid var(--azul2);padding:14px;margin-top:28px}
+    .note{font-size:12px;color:#666}
+    @media(max-width:780px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <img src="tmco.png" alt="TMCO Consultoria" />
+    <h1>QUESTIONÁRIO PARA DIAGNÓSTICO DE PROJETO JÁ EM ANDAMENTO</h1>
+  </header>
+
+  <div class="cta">
+    <button type="button" class="btn primary" onclick="mostrarFormulario()">Clique aqui e preencha o formulário</button>
+  </div>
+
+  <form id="questionario">
+    <h3>Dados da Empresa</h3>
+    <div class="grid">
+      <div class="q"><label>Razão Social <small class="req">*</small></label><input required name="razao_social" /></div>
+      <div class="q"><label>Nome Fantasia</label><input name="nome_fantasia" /></div>
+      <div class="q"><label>CNPJ <small class="req">*</small></label><input required name="cnpj" id="cnpj" placeholder="00.000.000/0000-00" /></div>
+      <div class="q"><label>Inscrição Estadual</label><input name="ie" /></div>
+      <div class="q"><label>Inscrição Municipal</label><input name="im" /></div>
+      <div class="q full"><label>Endereço</label><input name="endereco" /></div>
+      <div class="q"><label>Bairro</label><input name="bairro" /></div>
+      <div class="q"><label>Cidade</label><input name="cidade" /></div>
+      <div class="q"><label>UF <small class="req">*</small></label>
+        <input list="ufs" id="uf" name="uf" required placeholder="Ex.: SP" />
+        <datalist id="ufs">
+          <option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option>
+          <option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option>
+          <option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option>
+          <option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+          <option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option>
+          <option>SE</option><option>TO</option>
+        </datalist>
+      </div>
+      <div class="q"><label>CEP</label><input name="cep" id="cep" placeholder="00000-000" /></div>
+    </div>
+
+    <h3>Dados do Representante Legal</h3>
+    <div class="grid">
+      <div class="q"><label>Nome Completo <small class="req">*</small></label><input required name="rep_nome" /></div>
+      <div class="q"><label>Telefone</label><input name="rep_tel" id="tel" placeholder="(00) 00000-0000" /></div>
+      <div class="q"><label>E-mail <small class="req">*</small></label><input required type="email" name="rep_email" /></div>
+      <div class="q"><label>CPF</label><input name="rep_cpf" id="cpf" placeholder="000.000.000-00" /></div>
+      <div class="q"><label>RG</label><input name="rep_rg" /></div>
+      <div class="q"><label>Nacionalidade</label><input name="rep_nacionalidade" /></div>
+      <div class="q"><label>Estado Civil</label>
+        <select name="rep_estado_civil">
+          <option value="">Selecione</option><option>Solteiro(a)</option><option>Casado(a)</option>
+          <option>Divorciado(a)</option><option>Viúvo(a)</option><option>União Estável</option>
+        </select>
+      </div>
+      <div class="q"><label>Data de Nascimento</label><input type="date" name="rep_nascimento" /></div>
+      <div class="q full"><label>Endereço Residencial</label><input name="rep_endereco" /></div>
+      <div class="q"><label>Bairro Residencial</label><input name="rep_bairro" /></div>
+      <div class="q"><label>Cidade Residencial</label><input name="rep_cidade" /></div>
+      <div class="q"><label>UF Residencial</label><input list="ufs" name="rep_uf" placeholder="Ex.: SP" /></div>
+      <div class="q"><label>CEP Residencial</label><input name="rep_cep" id="cep_res" placeholder="00000-000" /></div>
+    </div>
+
+    <h3>Possui credenciamento nos Sistemas ABR?</h3>
+    <div class="grid">
+      <div class="q"><label>EASI/nSAPN:</label><select id="easi" name="EASI"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+      <div class="q"><label>ESOA/SNOA:</label><select id="esoa" name="ESOA"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+      <div class="q"><label>Nsapn/QEML:</label><select id="nsapn" name="Nsapn"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+      <div class="q"><label>BA ITX:</label><select id="baitx" name="BA ITX"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+      <div class="q"><label>Portabilidade:</label><select id="portabilidade" name="Portabilidade"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+      <div class="q"><label>STIRSHAKEN:</label><select id="stirshaken" name="STIRSHAKEN"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+    </div>
+
+    <h3>Possui recursos de numeração?</h3>
+    <div class="grid">
+      <div class="q"><label>RN1:</label><input name="RN1" /></div>
+      <div class="q"><label>EOT:</label><input name="EOT" /></div>
+      <div class="q"><label>Prefixo:</label><input name="Prefixo" /></div>
+      <div class="q"><label>CNG:</label><input name="CNG" /></div>
+    </div>
+
+    <h3>Solução ABR já implantada?</h3>
+    <div class="grid">
+      <div class="q"><label>Portabilidade:</label><select name="Portabilidade Implantada"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+      <div class="q"><label>Qual parceiro?</label><input name="Parceiro Portabilidade" /></div>
+      <div class="q"><label>STIRSHAKEN:</label><select name="STIRSHAKEN Implantado"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+    </div>
+
+    <h3>Possui CONTRATOS DE ITX com as operadoras?</h3>
+    <div class="grid">
+      <div class="q"><label>ALGAR:</label><select name="Contrato ALGAR"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+      <div class="q"><label>CLARO:</label><select name="Contrato CLARO"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+      <div class="q"><label>OI:</label><select name="Contrato OI"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+      <div class="q"><label>TIM:</label><select name="Contrato TIM"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+      <div class="q"><label>VIVO:</label><select name="Contrato VIVO"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+    </div>
+
+    <h3>Possui ITX estabelecida com as operadoras?</h3>
+    <div class="grid">
+      <div class="q"><label>ALGAR:</label><select name="ITX ALGAR"><option value="">Selecione</option><option>Direta</option><option>Indireta</option><option>Não</option></select></div>
+      <div class="q"><label>CLARO:</label><select name="ITX CLARO"><option value="">Selecione</option><option>Direta</option><option>Indireta</option><option>Não</option></select></div>
+      <div class="q"><label>OI:</label><select name="ITX OI"><option value="">Selecione</option><option>Direta</option><option>Indireta</option><option>Não</option></select></div>
+      <div class="q"><label>TIM:</label><select name="ITX TIM"><option value="">Selecione</option><option>Direta</option><option>Indireta</option><option>Não</option></select></div>
+      <div class="q"><label>VIVO:</label><select name="ITX VIVO"><option value="">Selecione</option><option>Direta</option><option>Indireta</option><option>Não</option></select></div>
+    </div>
+
+    <h3>Qual escopo do Projeto?</h3>
+    <div class="grid">
+      <label class="q"><input type="checkbox" name="Escopo" value="1ª Interconexão"> 1ª Interconexão</label>
+      <label class="q"><input type="checkbox" name="Escopo" value="Nova área Geográfica"> Nova área Geográfica</label>
+      <label class="q"><input type="checkbox" name="Escopo" value="Migração de Tecnologia"> Migração de Tecnologia (TDM/SIP/Internet)</label>
+      <label class="q"><input type="checkbox" name="Escopo" value="Ampliação de Rota Existente"> Ampliação de Rota Existente</label>
+      <label class="q"><input type="checkbox" name="Escopo" value="Contingência"> Contingência</label>
+      <label class="q"><input type="checkbox" name="Escopo" value="Inclusão Novo Serviço"> Inclusão Novo Serviço (STFC, SMP, SCM)</label>
+      <label class="q"><input type="checkbox" name="Escopo" value="Topologia SIP"> Topologia de Centralização SIP</label>
+    </div>
+
+    <h3>Possui Plataforma de Voz?</h3>
+    <div class="grid">
+      <div class="q"><label>Possui Plataforma de Voz?</label><select name="Plataforma Voz"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+      <div class="q"><label>Qual parceiro/fornecedor de Plataforma de Voz?</label><input name="Parceiro Voz" /></div>
+      <div class="q"><label>Possui Gateway?</label><select name="Gateway"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+      <div class="q"><label>Qual parceiro/fornecedor de GATEWAY?</label><input name="Parceiro Gateway" /></div>
+      <div class="q"><label>Possui Sistema/Plataforma DETRAF?</label><select name="DETRAF"><option value="">Selecione</option><option>Sim</option><option>Não</option></select></div>
+      <div class="q"><label>Qual parceiro/fornecedor de Plataforma DETRAF?</label><input name="Parceiro DETRAF" /></div>
+    </div>
+
+    <div class="note">Campos com <span class="req">*</span> são obrigatórios.</div>
+
+    <div class="actions">
+      <button class="btn primary" type="submit">Enviar</button>
+      <button class="btn ghost" type="button" id="btnExcel">Exportar Excel (local)</button>
+      <button class="btn ghost" type="button" id="btnPDF">Exportar PDF (local)</button>
+    </div>
+  </form>
+
+  <footer>TMCO Consultoria © 2025</footer>
+
+  <script>
+    function mostrarFormulario(){ 
+      document.getElementById('questionario').style.display='block'; 
+      scrollTo(0, document.getElementById('questionario').offsetTop-10); 
+    }
+
+    function getFormData(){
+      const fd = new FormData(document.getElementById('questionario'));
+      const data = {};
+      for(const [k,v] of fd.entries()){
+        if(k==='Escopo'){ (data[k]=data[k]||[]).push(v); }
+        else { data[k]=v; }
+      }
+      return data;
+    }
+
+    // Exportar Excel local
+    document.getElementById('btnExcel').onclick = ()=>{
+      const ws = XLSX.utils.json_to_sheet([getFormData()]);
+      const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Respostas");
+      XLSX.writeFile(wb, "respostas_tmco.xlsx");
+    };
+
+    // Exportar PDF local
+    document.getElementById('btnPDF').onclick = ()=>{
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({unit:'pt',format:'a4'});
+      doc.setFontSize(14); doc.text("Respostas do Questionário – TMCO",40,40);
+      let y=70; doc.setFontSize(10);
+      const data=getFormData();
+      Object.entries(data).forEach(([k,v])=>{
+        const line = `${k}: ${Array.isArray(v)?v.join(", "):v}`;
+        const split = doc.splitTextToSize(line, 515);
+        split.forEach(s=>{ if(y>770){doc.addPage(); y=40;} doc.text(s,40,y); y+=14; });
+      });
+      doc.save("respostas_tmco.pdf");
+    };
+
+    // Enviar ao backend
+    document.getElementById("questionario").addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      const dados=getFormData();
+      try{
+        const resp=await fetch("http://localhost:3000/submit",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify(dados)
+        });
+        const out=await resp.json();
+        alert(out.message || "Enviado!");
+      }catch(err){
+        alert("❌ Falha ao enviar para o servidor.");
+      }
+    });
+  </script>
+</body>
+</html>
