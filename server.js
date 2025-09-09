@@ -8,18 +8,18 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000; // Render precisa usar process.env.PORT
 
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// Servir arquivos estáticos da pasta frontend
-app.use(express.static(path.join(__dirname, "../frontend")));
 
+// Servir arquivos estáticos da pasta "public"
+app.use(express.static(path.join(__dirname, "public")));
 
 // Servir o formulário (HTML) automaticamente
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/questionario.html"));
+  res.sendFile(path.join(__dirname, "public", "questionario.html"));
 });
 
 // Rota para receber respostas
@@ -29,30 +29,23 @@ app.post("/submit", async (req, res) => {
   try {
     // === 1) Gerar Excel bem formatado ===
     const excelPath = path.join(__dirname, "respostas.xlsx");
-let wb;
+    let wb;
 
-// Se o arquivo já existir, abre ele
-if (fs.existsSync(excelPath)) {
-  wb = XLSX.readFile(excelPath);
-  const ws = wb.Sheets["Respostas"];
-  const data = XLSX.utils.sheet_to_json(ws);
+    if (fs.existsSync(excelPath)) {
+      wb = XLSX.readFile(excelPath);
+      const ws = wb.Sheets["Respostas"];
+      const data = XLSX.utils.sheet_to_json(ws);
+      data.push(dados);
 
-  // Adiciona a nova resposta
-  data.push(dados);
+      const newWs = XLSX.utils.json_to_sheet(data);
+      wb.Sheets["Respostas"] = newWs;
+    } else {
+      wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet([dados]);
+      XLSX.utils.book_append_sheet(wb, ws, "Respostas");
+    }
 
-  // Cria a planilha novamente
-  const newWs = XLSX.utils.json_to_sheet(data);
-  wb.Sheets["Respostas"] = newWs;
-} else {
-  // Se não existir, cria um novo
-  wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.json_to_sheet([dados]);
-  XLSX.utils.book_append_sheet(wb, ws, "Respostas");
-}
-
-// Salva o Excel corretamente
-XLSX.writeFile(wb, excelPath);
-
+    XLSX.writeFile(wb, excelPath);
 
     // === 2) Criar corpo do e-mail ===
     let corpoEmail = "📋 Nova resposta recebida:\n\n";
@@ -90,12 +83,8 @@ XLSX.writeFile(wb, excelPath);
   }
 });
 
-// Servir arquivos estáticos da pasta frontend
-app.use("/static", express.static(path.join(__dirname, "../frontend")));
-
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+  console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
-// 
 
